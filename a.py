@@ -1,60 +1,38 @@
-import random
-import array
+from tkinter import *
+from random import randint
 
-# maximum length of password needed
-# this can be changed to suit your password length
-MAX_LEN = 12
+window  = Tk()
 
-# declare arrays of the character that we need in out password
-# Represented as chars to enable easy string concatenation
-DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-LOCASE_CHARACTERS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
-					'i', 'j', 'k', 'm', 'n', 'o', 'p', 'q',
-					'r', 's', 't', 'u', 'v', 'w', 'x', 'y',
-					'z']
+window.title('Strong Password Generator')
+window.geometry("500x300")
 
-UPCASE_CHARACTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
-					'I', 'J', 'K', 'M', 'N', 'O', 'p', 'Q',
-					'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',
-					'Z']
+def new_rand():
+	#Clear the entry box
+	pw_entry.delete(0,END)
+	pw_length = int(my_entry.get())
+	my_pasword =  ''
+	for x in range(pw_length):
+		my_pasword+=chr(randint(33,126))
 
-SYMBOLS = ['@', '#', '$', '%', '=', ':', '?', '.', '/', '|', '~', '>',
-		'*', '(', ')', '<']
+	pw_entry.insert(0,my_pasword)
+def clipper():
+	window.clipboard_clear()
+	window.clipboard_append(pw_entry.get())
+lf  = LabelFrame(window,text= "How many characters?")
+lf.pack(pady=20)
+my_entry = Entry(lf, font=("Helvetica", 24))
+my_entry.pack(pady=20,padx=20)
 
-# combines all the character arrays above to form one array
-COMBINED_LIST = DIGITS + UPCASE_CHARACTERS + LOCASE_CHARACTERS + SYMBOLS
+pw_entry= Entry(window,text = '',font=("Helvetica",24),bd=0)
+pw_entry.pack(pady=20)
 
-# randomly select at least one character from each character set above
-rand_digit = random.choice(DIGITS)
-rand_upper = random.choice(UPCASE_CHARACTERS)
-rand_lower = random.choice(LOCASE_CHARACTERS)
-rand_symbol = random.choice(SYMBOLS)
+my_frame = Frame(window)
+my_frame.pack(pady=20)
 
-# combine the character randomly selected above
-# at this stage, the password contains only 4 characters but
-# we want a 12-character password
-temp_pass = rand_digit + rand_upper + rand_lower + rand_symbol
+my_button  = Button(my_frame,text="Generate Strong Password",command=new_rand)
+my_button.grid(row=0,column=0, padx=10)
+DEFAULT_BG_COLOR =my_button['bg']
+clip_button = Button(my_frame,text="Copy to clipboard",command=clipper)
+clip_button.grid(row=0,column=1,padx=10)
 
-
-# now that we are sure we have at least one character from each
-# set of characters, we fill the rest of
-# the password length by selecting randomly from the combined
-# list of character above.
-for x in range(MAX_LEN - 4):
-	temp_pass = temp_pass + random.choice(COMBINED_LIST)
-
-	# convert temporary password into array and shuffle to
-	# prevent it from having a consistent pattern
-	# where the beginning of the password is predictable
-	temp_pass_list = array.array('u', temp_pass)
-	random.shuffle(temp_pass_list)
-
-# traverse the temporary password array and append the chars
-# to form the password
-password = ""
-for x in temp_pass_list:
-		password = password + x
-		
-# print out password
-print(password)
-
+window.mainloop()
